@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Time Machine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100%;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .sidebar-logo {
+            width: 36px;
+            height: 36px;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px;
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            font-weight: 500;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 15px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.6s ease;
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary);
+        }
+
+        .alert-info {
+            background-color: rgba(114, 9, 183, 0.1);
+            border-left-color: var(--info);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 20px 10px;
+                overflow: hidden;
+            }
+            .sidebar-header h2, .nav-link span {
+                display: none;
+            }
+            .nav-link {
+                justify-content: center;
+                padding: 12px 5px;
+            }
+            .nav-link i {
+                margin-right: 0;
+                font-size: 1.3rem;
+            }
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            background: white;
+            border-radius: var(--border-radius);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            display: inline-block;
+        }
+
+        .user-message {
+            margin-left: auto;
+        }
+
+        .user-message .message-content {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .ai-message .message-content {
+            background-color: #f0f2f5;
+            color: var(--dark);
+        }
+
+        .chat-input {
+            background: white;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #send-message {
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        #send-message:hover {
+            background-color: var(--secondary);
+        }
+
+        /* Suggested Questions Styles */
+        .suggested-questions {
+            margin-top: 15px;
+        }
+
+        .suggestion-btn {
+            background-color: #f0f2f5;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+            margin: 5px;
+        }
+
+        .suggestion-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .message-content ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .message-content li {
+            margin-bottom: 5px;
+        }
+
+        /* Typing Indicator Styles */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background-color: #4361ee;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1s infinite;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Full Page Chat Styles */
+        .chat-interface {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f7fa;
+        }
+
+        .chat-header {
+            background-color: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-title i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .chat-title h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+
+        .chat-messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 15px;
+            max-width: 100%;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex: 1;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background-color: white;
+            box-shadow: var(--box-shadow);
+        }
+
+        .user-message {
+            flex-direction: row-reverse;
+        }
+
+        .user-message .message-avatar {
+            background-color: var(--accent);
+        }
+
+        .user-message .message-content {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .chat-input-container {
+            background-color: white;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            font-family: 'Poppins', sans-serif;
+            resize: none;
+            min-height: 50px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .input-footer {
+            text-align: center;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .chat-header {
+                padding: 10px 15px;
+            }
+            
+            .chat-title h2 {
+                font-size: 1rem;
+            }
+            
+            .message {
+                gap: 10px;
+            }
+            
+            .message-avatar {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">FT</div>
+                <h2>Financial Time Machine</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#finances" class="nav-link">
+                        <i class="fas fa-wallet"></i>
+                        <span>My Finances</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#simulations" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Simulations</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#insights" class="nav-link">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Insights</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#advisor" class="nav-link">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Advisor</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#settings" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section">
+                <div class="header">
+                    <h1 class="page-title">Dashboard</h1>
+                    <div class="user-profile">
+                        <span>Welcome, User</span>
+                        <div class="user-avatar">U</div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Reducing your dining expenses by ₹200/month can increase your savings by ₹2,400/year.
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Financial Snapshot</h2>
+                        </div>
+                        <table class="table">
+                            <tr>
+                                <td>Monthly Income</td>
+                                <td id="monthly-income">₹5,000</td>
+                            </tr>
+                            <tr>
+                                <td>Monthly Expenses</td>
+                                <td id="monthly-expenses">₹3,200</td>
+                            </tr>
+                            <tr>
+                                <td>Monthly Savings</td>
+                                <td id="monthly-savings">₹1,800</td>
+                            </tr>
+                            <tr>
+                                <td>Total Savings</td>
+                                <td id="total-savings">₹15,000</td>
+                            </tr>
+                            <tr>
+                                <td>Investments</td>
+                                <td id="total-investments">₹8,000</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Savings Rate</h2>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="savingsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Expense Trends</h2>
+                        <div class="card-actions">
+                            <select class="form-control btn-sm" id="trend-period">
+                                <option>Last 6 Months</option>
+                                <option>Last Year</option>
+                                <option>Last 2 Years</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="expenseTrendChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Finances Section -->
+            <section id="finances" class="section" style="display: none;">
+                <div class="header">
+                    <h1 class="page-title">My Finances</h1>
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Income & Expenses</h2>
+                            <button class="btn btn-primary btn-sm" id="edit-finances">Edit</button>
+                        </div>
+                        <div id="finances-view">
+                            <table class="table">
+                                <tr>
+                                    <td>Monthly Income</td>
+                                    <td id="view-income">₹50,000</td>
+                                </tr>
+                                <tr>
+                                    <td>Monthly Expenses</td>
+                                    <td id="view-expenses">₹30,000</td>
+                                </tr>
+                                <tr>
+                                    <td>Monthly Savings</td>
+                                    <td id="view-savings">₹20,000</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="finances-edit" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Monthly Income</label>
+                                <input type="number" class="form-control" id="edit-income" value="50000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Monthly Expenses</label>
+                                <input type="number" class="form-control" id="edit-expenses" value="30000">
+                            </div>
+                            <button class="btn btn-primary" id="save-finances">Save Changes</button>
+                            <button class="btn btn-outline" id="cancel-edit">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Assets & Liabilities</h2>
+                        </div>
+                        <table class="table">
+                            <tr>
+                                <th>Savings</th>
+                                <th>Investments</th>
+                                <th>Debt</th>
+                            </tr>
+                            <tr>
+                                <td id="savings-amount">₹100,000</td>
+                                <td id="investments-amount">₹300,000</td>
+                                <td id="debt-amount">₹50,000</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Expense Breakdown</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="expenseBreakdownChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Simulations Section -->
+            <section id="simulations" class="section" style="display: none;">
+                <div class="header">
+                    <h1 class="page-title">Financial Simulations</h1>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">What-If Scenario</h2>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Scenario Type</label>
+                        <select class="form-control" id="scenario-type">
+                            <option value="career">Career Change</option>
+                            <option value="expense">Expense Reduction</option>
+                            <option value="investment">Investment Growth</option>
+                        </select>
+                    </div>
+
+                    <div id="career-change-form">
+                        <div class="form-group">
+                            <label class="form-label">New Salary</label>
+                            <input type="number" class="form-control" id="new-salary" placeholder="Enter new salary">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Time Period (Years)</label>
+                            <input type="number" class="form-control" id="time-period" value="5" min="1" max="30">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="run-simulation">Simulate</button>
+
+                    <div id="simulation-results" style="margin-top: 30px; display: none;">
+                        <h3>Projected Outcome</h3>
+                        <div class="chart-container">
+                            <canvas id="simulationChart"></canvas>
+                        </div>
+                        <div class="alert" id="simulation-summary">
+                            Your projected net worth could reach <strong>₹2,000,000</strong> in 5 years.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Insights Section -->
+            <section id="insights" class="section" style="display: none;">
+                <div class="header">
+                    <h1 class="page-title">Spending Insights</h1>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Spending Breakdown</h2>
+                    </div>
+                    <div class="grid">
+                        <div style="flex: 1;">
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Housing</span>
+                                    <span>30%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 30%; background-color: #4361ee;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Food</span>
+                                    <span>20%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 20%; background-color: #4895ef;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Transport</span>
+                                    <span>15%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 15%; background-color: #4cc9f0;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Entertainment</span>
+                                    <span>25%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 25%; background-color: #7209b7;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>Other</span>
+                                    <span>10%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 10%; background-color: #f72585;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div class="chart-container">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Expense Trends</h2>
+                        <select class="form-control btn-sm" id="insight-period">
+                            <option>Last 12 Months</option>
+                            <option>Last 6 Months</option>
+                            <option>Last 3 Months</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Advisor Section -->
+            <section id="advisor" class="section" style="display: none;">
+                <div class="chat-interface">
+                    <div class="chat-header">
+                        <div class="chat-title">
+                            <i class="fas fa-robot"></i>
+                            <h2>AI Financial Advisor</h2>
+                        </div>
+                        <div class="chat-actions">
+                            <button class="btn btn-outline btn-sm" id="clear-chat">
+                                <i class="fas fa-trash"></i> Clear Chat
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chat-messages-container" id="chat-messages">
+                        <div class="message ai-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Hello! I'm your AI financial advisor. I'm here to help you with:</p>
+                                <ul>
+                                    <li>Investment strategies</li>
+                                    <li>Budget planning</li>
+                                    <li>Retirement planning</li>
+                                    <li>Debt management</li>
+                                    <li>Financial goal setting</li>
+                                </ul>
+                                <p>Here are some questions you might want to ask:</p>
+                                <div class="suggested-questions">
+                                    <button class="suggestion-btn">How should I start investing?</button>
+                                    <button class="suggestion-btn">What's the best way to save for retirement?</button>
+                                    <button class="suggestion-btn">How can I reduce my monthly expenses?</button>
+                                    <button class="suggestion-btn">What's a good emergency fund amount?</button>
+                                    <button class="suggestion-btn">How do I create a budget?</button>
+                                    <button class="suggestion-btn">What are good investment options for beginners?</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <div class="input-group">
+                            <textarea id="user-input" class="form-control" placeholder="Type your financial question here..." rows="1"></textarea>
+                            <button id="send-message" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="input-footer">
+                            <small>AI Financial Advisor may produce inaccurate information. Consider verifying important financial decisions.</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Chart instances
+        let savingsChart, expenseTrendChart, expenseBreakdownChart, categoryChart, monthlyTrendChart, simulationChart;
+
+        // Initialize all charts
+        function initCharts() {
+            // Savings Rate Chart (Doughnut)
+            savingsChart = new Chart(document.getElementById('savingsChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Savings', 'Expenses'],
+                    datasets: [{
+                        data: [1800, 3200],
+                        backgroundColor: ['#4361ee', '#f72585'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Expense Trend Chart (Line)
+            expenseTrendChart = new Chart(document.getElementById('expenseTrendChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Expenses',
+                        data: [3200, 2900, 3500, 3100, 3300, 3000],
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Expense Breakdown Chart (Bar)
+            expenseBreakdownChart = new Chart(document.getElementById('expenseBreakdownChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Housing', 'Food', 'Transport', 'Entertainment', 'Other'],
+                    datasets: [{
+                        label: 'Monthly Expenses',
+                        data: [1500, 1000, 750, 1250, 500],
+                        backgroundColor: [
+                            '#4361ee',
+                            '#4895ef',
+                            '#4cc9f0',
+                            '#7209b7',
+                            '#f72585'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Category Chart (Pie)
+            categoryChart = new Chart(document.getElementById('categoryChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: ['Housing', 'Food', 'Transport', 'Entertainment', 'Other'],
+                    datasets: [{
+                        data: [30, 20, 15, 25, 10],
+                        backgroundColor: [
+                            '#4361ee',
+                            '#4895ef',
+                            '#4cc9f0',
+                            '#7209b7',
+                            '#f72585'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+
+            // Monthly Trend Chart (Line)
+            monthlyTrendChart = new Chart(document.getElementById('monthlyTrendChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [
+                        {
+                            label: 'Income',
+                            data: [5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000],
+                            borderColor: '#4cc9f0',
+                            backgroundColor: 'transparent',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Expenses',
+                            data: [3200, 2900, 3500, 3100, 3300, 3000, 3400, 3200, 3100, 3300, 3500, 4000],
+                            borderColor: '#f72585',
+                            backgroundColor: 'transparent',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // Update simulation chart
+        function updateSimulationChart(years, current, projected) {
+            const labels = ['Now'];
+            const data = [current];
+            
+            // Add intermediate years
+            for (let i = 1; i <= years; i++) {
+                labels.push(`Year ${i}`);
+                // Simple linear progression
+                data.push(current + ((projected - current) * (i/years)));
+            }
+            
+            if (simulationChart) simulationChart.destroy();
+            
+            simulationChart = new Chart(document.getElementById('simulationChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Projected Net Worth',
+                        data: data,
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: false }
+                    }
+                }
+            });
+        }
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active state
+                document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Hide all sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Show selected section
+                const target = this.getAttribute('href').substring(1);
+                document.getElementById(target).style.display = 'block';
+            });
+        });
+
+        // My Finances Edit/Save
+        document.getElementById('edit-finances').addEventListener('click', function() {
+            document.getElementById('finances-view').style.display = 'none';
+            document.getElementById('finances-edit').style.display = 'block';
+        });
+
+        document.getElementById('cancel-edit').addEventListener('click', function() {
+            document.getElementById('finances-view').style.display = 'block';
+            document.getElementById('finances-edit').style.display = 'none';
+        });
+
+        document.getElementById('save-finances').addEventListener('click', function() {
+            const newIncome = document.getElementById('edit-income').value;
+            const newExpenses = document.getElementById('edit-expenses').value;
+            
+            // Update view
+            document.getElementById('view-income').textContent = '₹' + Number(newIncome).toLocaleString();
+            document.getElementById('view-expenses').textContent = '₹' + Number(newExpenses).toLocaleString();
+            document.getElementById('view-savings').textContent = '₹' + (newIncome - newExpenses).toLocaleString();
+            
+            // Update dashboard
+            document.getElementById('monthly-income').textContent = '₹' + (newIncome / 100).toLocaleString();
+            document.getElementById('monthly-expenses').textContent = '₹' + (newExpenses / 100).toLocaleString();
+            document.getElementById('monthly-savings').textContent = '₹' + ((newIncome - newExpenses) / 100).toLocaleString();
+            
+            document.getElementById('finances-view').style.display = 'block';
+            document.getElementById('finances-edit').style.display = 'none';
+            
+            // Update charts
+            updateCharts();
+        });
+
+        // Simulation
+        document.getElementById('run-simulation').addEventListener('click', function() {
+            const newSalary = document.getElementById('new-salary').value;
+            const years = document.getElementById('time-period').value;
+            
+            if (!newSalary) {
+                alert('Please enter a new salary value');
+                return;
+            }
+            
+            // Simple projection calculation
+            const currentNetWorth = 150000; // Example value
+            const salaryIncrease = newSalary - 50000; // Assuming current salary is 50,000
+            const projectedGrowth = salaryIncrease * years * 0.7; // Simplified projection
+            
+            const projectedNetWorth = currentNetWorth + projectedGrowth;
+            
+            // Update results
+            document.getElementById('simulation-summary').innerHTML = 
+                `Your projected net worth could reach <strong>₹${projectedNetWorth.toLocaleString()}</strong> in ${years} years.`;
+            
+            // Show results
+            document.getElementById('simulation-results').style.display = 'block';
+            
+            // Update chart
+            updateSimulationChart(years, currentNetWorth, projectedNetWorth);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+        });
+
+        // Configuration Section
+        const CONFIG = {
+            GEMINI_API_KEY: 'AIzaSyBkMW9C9F0wsg5Q6h8THbdv7Po3wtaOPqA',
+            GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+            MAX_RESPONSE_WORDS: 500
+        };
+
+        // UI Components Section
+        const UI = {
+            chatMessages: document.getElementById('chat-messages'),
+            userInput: document.getElementById('user-input'),
+            sendButton: document.getElementById('send-message'),
+            
+            createTypingIndicator: () => {
+                const indicator = document.createElement('div');
+                indicator.className = 'message ai-message';
+                indicator.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="typing-indicator">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                `;
+                return indicator;
+            },
+
+            addMessage: (content, isUser = false) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'message-avatar';
+                avatarDiv.innerHTML = isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+                messageContent.innerHTML = content;
+                
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(messageContent);
+                UI.chatMessages.appendChild(messageDiv);
+                UI.chatMessages.scrollTop = UI.chatMessages.scrollHeight;
+            }
+        };
+
+        // API Service Section
+        const APIService = {
+            generatePrompt: (message) => ({
+                contents: [{
+                    parts: [{
+                        text: `You are a financial advisor. Keep responses under ${CONFIG.MAX_RESPONSE_WORDS} words. 
+                        Focus on Indian markets. Use bullet points. Be concise.
+                        Question: ${message}`
+                    }]
+                }]
+            }),
+
+            callGeminiAPI: async (prompt) => {
+                const response = await fetch(`${CONFIG.GEMINI_API_URL}?key=${CONFIG.GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(prompt)
+                });
+
+                if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+                return response.json();
+            }
+        };
+
+        // Chat Service Section
+        const ChatService = {
+            handleGreeting: async (message) => {
+                const lowerMessage = message.toLowerCase();
+                if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || 
+                    lowerMessage.includes('hey') || lowerMessage.includes('greetings')) {
+                    UI.addMessage("Hello! I'm your AI financial advisor. How can I help you today?");
+                    return true;
+                }
+                return false;
+            },
+
+            processResponse: (data) => {
+                if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    return data.candidates[0].content.parts[0].text;
+                }
+                throw new Error('Invalid response format');
+            }
+        };
+
+        // Main Chat Function
+        async function sendMessage() {
+            const message = UI.userInput.value.trim();
+            if (!message) return;
+
+            UI.addMessage(message, true);
+            UI.userInput.value = '';
+
+            if (await ChatService.handleGreeting(message)) return;
+
+            let typingIndicator = null;
+            try {
+                typingIndicator = UI.createTypingIndicator();
+                UI.chatMessages.appendChild(typingIndicator);
+
+                const prompt = APIService.generatePrompt(message);
+                const data = await APIService.callGeminiAPI(prompt);
+                
+                if (typingIndicator?.parentNode) {
+                    UI.chatMessages.removeChild(typingIndicator);
+                }
+
+                const response = ChatService.processResponse(data);
+                UI.addMessage(response);
+
+            } catch (error) {
+                console.error('Error:', error);
+                if (typingIndicator?.parentNode) {
+                    UI.chatMessages.removeChild(typingIndicator);
+                }
+                UI.addMessage('Sorry, I encountered an error. Please try again.');
+            }
+        }
+
+        // Event Listeners
+        UI.sendButton.addEventListener('click', sendMessage);
+        UI.userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Auto-resize textarea
+        UI.userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Clear chat functionality
+        document.getElementById('clear-chat').addEventListener('click', function() {
+            UI.chatMessages.innerHTML = `
+                <div class="message ai-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <p>Hello! I'm your AI financial advisor. I'm here to help you with:</p>
+                        <ul>
+                            <li>Investment strategies</li>
+                            <li>Budget planning</li>
+                            <li>Retirement planning</li>
+                            <li>Debt management</li>
+                            <li>Financial goal setting</li>
+                        </ul>
+                        <p>Here are some questions you might want to ask:</p>
+                        <div class="suggested-questions">
+                            <button class="suggestion-btn">How should I start investing?</button>
+                            <button class="suggestion-btn">What's the best way to save for retirement?</button>
+                            <button class="suggestion-btn">How can I reduce my monthly expenses?</button>
+                            <button class="suggestion-btn">What's a good emergency fund amount?</button>
+                            <button class="suggestion-btn">How do I create a budget?</button>
+                            <button class="suggestion-btn">What are good investment options for beginners?</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Reattach event listeners to suggestion buttons
+            document.querySelectorAll('.suggestion-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    UI.userInput.value = this.textContent;
+                    sendMessage();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
